@@ -1,0 +1,13 @@
+FROM python:3.12
+
+WORKDIR /app
+
+COPY api.py .
+COPY db.py .
+COPY main.py .
+COPY util.py .
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+ENTRYPOINT ["python3", "main.py"]
