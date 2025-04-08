@@ -2,14 +2,17 @@ from flask import Flask
 from flask_restful import Api
 from flask_migrate import Migrate
 
-from api import ResourceTarefa
+from api import ResourceTarefa, ResourceUser
 from db import DB
 from util import load_config
+
+from os import urandom
 
 APP = Flask(__name__)
 
 API = Api(APP)
-API.add_resource(ResourceTarefa, '/', '/tarefas')
+API.add_resource(ResourceTarefa, '/tarefa/<string:user>', '/tarefa/')
+API.add_resource(ResourceUser, '/usuario')
 
 conf = load_config()
 
@@ -25,7 +28,7 @@ if conf is None:
     print(" - DEBUG")
     exit(1)
 
-APP.config['SECRET_KEY'] = 'aa'
+APP.config['SECRET_KEY'] = urandom(32)
 APP.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://{uname}:{passw}@{addr}:{port}/{db}".format(**conf)
 
 DB.init_app(APP)
