@@ -1,11 +1,11 @@
 import pytest
 from main import create_app
 from sqlalchemy import create_engine
-from db import Tarefa, User, DB
+from db import Tarefa, User
 from pathlib import Path
 from shutil import rmtree
 
-def new_app():
+def new_app(database_uri: str):
     app = create_app('test', dict(
         uname='',
         passw='',
@@ -15,7 +15,7 @@ def new_app():
         SERVER_ADDR='',
         SERVER_PORT='',
         DEBUG=True,
-        DATABASE_URI=f"sqlite:////Users/hrchlhck/Documents/repositories/devsecops-exemplo/svc-tarefas/app/instance/test.db"
+        DATABASE_URI=f"sqlite:////{database_uri}"
     ))
     app.config.update(TESTING=True)
 
@@ -23,13 +23,14 @@ def new_app():
 
 @pytest.fixture
 def client():
-    with new_app().test_client() as client:
-        p = Path("instance/test.db")
+    base = Path(__file__).parent.absolute()
+    p = base / Path("instance/test.db")
 
-        if not p.parent.exists():
-            p.parent.mkdir(exist_ok=True)
+    if not p.parent.exists():
+        p.parent.mkdir(exist_ok=True)
 
-        engine = create_engine(f"sqlite:///{p}")
+    with new_app(str(p.absolute())).test_client() as client:
+        engine = create_engine(f"sqlite:///{p.absolute()}")
         Tarefa.metadata.create_all(engine)
         User.metadata.create_all(engine)
         yield client
