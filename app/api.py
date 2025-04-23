@@ -58,7 +58,7 @@ class ResourceUser(Resource):
 
         nome = data.get('nome')
         if nome is None or len(nome) == 0:
-            return {"message": "Não foi possível criar usuário. Nome vazio"}, 403  
+            return {"message": "Não foi possível criar usuário. Nome vazio"}, 400  
         
         u = User(nome=nome)
 
