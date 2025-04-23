@@ -4,3 +4,4 @@ flask-sqlalchemy
 pymysql
 cryptography
 flask-migrate
+pytest
